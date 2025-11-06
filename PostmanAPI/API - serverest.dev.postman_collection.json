@@ -1,0 +1,447 @@
+{
+	"info": {
+		"_postman_id": "7f25c46d-7945-4e6d-8424-f192c1b1fbaa",
+		"name": "API - serverest.dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49387066",
+		"_collection_link": "https://solar-astronaut-4164515.postman.co/workspace/Luiz-Neto's-Workspace~f24b79ac-6933-4b41-8b91-af6c017a1c03/collection/49387066-7f25c46d-7945-4e6d-8424-f192c1b1fbaa?action=share&source=collection_link&creator=49387066"
+	},
+	"item": [
+		{
+			"name": "Cadastrar usuário",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201) {\r",
+							"    pm.test(\"Status code is 201\", function () {\r",
+							"        pm.response.to.have.status(201);\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Mensagem de sucesso\", function () {\r",
+							"        var jsonData = pm.response.json();\r",
+							"        pm.expect(jsonData.message).to.eql(\"Cadastro realizado com sucesso\");\r",
+							"    });\r",
+							"} else if (pm.response.code === 400) {\r",
+							"    pm.test(\"Status code is 400\", function () {\r",
+							"        pm.response.to.have.status(400);\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Mensagem de erro\", function () {\r",
+							"        var jsonData = pm.response.json();\r",
+							"        pm.expect(jsonData.message).to.include(\"Este email já está sendo usado\");\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							"var jsonData = pm.request.body ? JSON.parse(pm.request.body.raw) : {};\r",
+							"pm.collectionVariables.set(\"email\", jsonData.email);\r",
+							"\r",
+							"pm.test(\"Validação da mensagem de resposta\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    if (jsonData.message === \"Cadastro realizado com sucesso\") {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Cadastro realizado com sucesso\");\r",
+							"    } else if (jsonData.message === \"Este email já está sendo usado\") {\r",
+							"        pm.expect(jsonData.message).to.eql(\"Este email já está sendo usado\");\r",
+							"    } else {\r",
+							"        pm.expect.fail(\"Mensagem inesperada: \" + jsonData.message);\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"// Parse the response JSON\r",
+							"const responseJson = pm.response.json();\r",
+							"\r",
+							"// Save the _id to a collection variable\r",
+							"pm.collectionVariables.set(\"user_id\", responseJson._id);\r",
+							"\r",
+							"// Optional: Log to console to verify it worked\r",
+							"console.log(\"Saved _id:\", responseJson._id);\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"Luiz Roberto API\",\r\n  \"email\": \"luizitow54@hotmail.com\",\r\n  \"password\": \"Maker@123\",\r\n  \"administrador\": \"true\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/usuarios",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"usuarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Login realizado com sucesso\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Login realizado com sucesso\");\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set(\"token\", jsonData.authorization);\r",
+							"\r",
+							"pm.test(\"Token de autorização foi salvo\", function () {\r",
+							"    pm.expect(pm.environment.get(\"token\")).to.include(\"Bearer \");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"luizitow30@hotmail.com\",\r\n  \"password\": \"Maker@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login?token={{vault:Token}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "{{vault:Token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar usuários",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Login realizado com sucesso\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Login realizado com sucesso\");\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set(\"token\", jsonData.authorization);\r",
+							"\r",
+							"pm.test(\"Token de autorização foi salvo\", function () {\r",
+							"    pm.expect(pm.environment.get(\"token\")).to.include(\"Bearer \");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"quantidade\": 1,\r\n  \"usuarios\": [\r\n    {\r\n      \"nome\": \"Luiz Roberto API\",\r\n      \"email\": \"luizitow54@hotmail.com\",\r\n      \"password\": \"Maker@123\",\r\n      \"administrador\": \"true\",\r\n      \"_id\": \"vsx7AySNViky0o59\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/usuarios",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"usuarios"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "{{vault:Token}}",
+							"disabled": true
+						},
+						{
+							"key": "_id",
+							"value": "{{user_id}}",
+							"disabled": true
+						},
+						{
+							"key": "nome",
+							"value": "Luiz Roberto API",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "luizitow54@hotmail.com",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "Maker@123",
+							"disabled": true
+						},
+						{
+							"key": "administrador",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buscar usuário",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Confirmação do _id na resposta\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData._id).to.eql(\"0uxuPY0cbmQhpEz1\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/usuarios/:{_id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"usuarios",
+						":{_id}"
+					],
+					"variable": [
+						{
+							"key": "{_id}",
+							"value": "0uxuPY0cbmQhpEz1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Editar usuario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Confirma mensagem de alteração\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Registro alterado com sucesso\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Sandrine10\", // Alterando o nome\r\n    \"email\": \"sandrine1@email.com\",\r\n    \"password\": \"1234\",\r\n    \"administrador\": \"true\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/usuarios/:{_id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"usuarios",
+						":{_id}"
+					],
+					"variable": [
+						{
+							"key": "{_id}",
+							"value": "0uxuPY0cbmQhpEz1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "tokenServerest",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": ""
+		},
+		{
+			"key": "_id",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		}
+	]
+}
