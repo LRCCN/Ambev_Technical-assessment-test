@@ -133,8 +133,13 @@ Cypress generates detailed test reports including:
 This project is part of a technical assessment for Ambev.
 
 ## 🐛 Issues and Support
-Botão Editar não funciona.
-Reprodução: Login > Lista de Usuários > "Editar"
+
+Issue 1: Critério de Inputs incorretos ao clicar mais de 1 vez no botão "Entrar".
+Reprodução: Acessar a página: https://front.serverest.dev/login > Fazer Login > Inserir email > "Entrar"
+![alt text](image-1.png)
+
+Issue 2: Botão Editar não funciona.
+Reprodução: Acessar a página > Fazer Login > Lista de Usuários > "Editar"
 ![alt text](image.png)
 
 ---
