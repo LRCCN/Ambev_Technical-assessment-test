@@ -133,8 +133,9 @@ Cypress generates detailed test reports including:
 This project is part of a technical assessment for Ambev.
 
 ## 🐛 Issues and Support
-
-If you encounter any issues or need support, please create an issue in the GitHub repository.
+Botão Editar não funciona.
+Reprodução: Login > Lista de Usuários > "Editar"
+![alt text](image.png)
 
 ---
 
